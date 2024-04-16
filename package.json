@@ -1,0 +1,27 @@
+{
+  "name": "api-db2-proyecto2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./src/app.js",
+  "scripts": {
+    "dev": "nodemon src/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Teviets/API-db2-proyecto2.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Teviets/API-db2-proyecto2/issues"
+  },
+  "homepage": "https://github.com/Teviets/API-db2-proyecto2#readme",
+  "dependencies": {
+    "axios": "^1.6.8",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "neo4j-driver": "^5.19.0",
+    "nodemon": "^3.1.0"
+  }
+}
