@@ -71,11 +71,11 @@ const editDescription = async (req, res) => {
 
 // Get favorite series of a user
 const getFavoriteSeries = async (req, res) => {
-    const { name, apellido } = req.body;
+    const { email } = req.body;
     try {
         const result = await session.run(
-            'MATCH (s:Series)-[r:fav_de]->(u:Usuarios) WHERE u.name = $nombre AND apellido = $apellido RETURN s;',
-            { name, apellido }
+            'MATCH (s:Series)-[r:fav_de]->(u:Usuarios) WHERE u.email = $email RETURN s;',
+            { email }
         );
 
         const response = result.records.map(record => {
@@ -102,7 +102,7 @@ const getViewedActors = async (req, res) => {
     const { email } = req.body;
     try {
         const result = await session.run(
-            'MATCH (a:Actor)-[:fav_de]->(u:Usuarios) WHERE u.email = $email RETURN a',
+            'MATCH (a:Actor)-[:Fav_de]->(u:Usuarios) WHERE u.email = $email RETURN a',
             { email }
         );
         const response = result.records.map(record => {
