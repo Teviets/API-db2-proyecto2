@@ -182,7 +182,7 @@ const getFavoritePlatforms = async (req, res) => {
             return {
                 message: 200,
                 name: platform.properties.name,
-                precio: platform.properties.precio,
+                precio: platform.properties.precio.low,
                 lanzamiento: platform.properties.lanzamiento,
                 tipo: platform.properties.tipo
             };
