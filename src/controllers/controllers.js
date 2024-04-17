@@ -42,8 +42,10 @@ const login = async (req, res) => {
 const  register = async (req, res) => {
     const { nombre, apellido, correo, constraseña, edad, descripcion } = req.body;
     try {
+        
+
         await session.run(
-            'CREATE (u:Usuarios {nombre: $nombre, apellido: $apellido, correo: $correo, constraseña: $constraseña, edad: $edad, descripcion: $descripcion})',
+            'CREATE (u:Usuarios {name: $nombre, apellido: $apellido, email: $correo, constraseña: $constraseña, edad: $edad, descripcion: $descripcion})',
             { nombre, apellido, correo, constraseña, edad, descripcion }
         );
         res.status(200).send({message: 200});
