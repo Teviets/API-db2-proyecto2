@@ -376,12 +376,21 @@ const getGenresOfSerie = async (req, res) => {
     const { serie } = req.body;
     try {
         const result = await session.run(
-            'MATCH (s:Serie)-[:BELONGS_TO]->(g:Genre) WHERE s.name = $serie RETURN g',
+            'MATCH (s:Series)-[:Pertenece]->(g:Genre) WHERE s.title = $serie RETURN g',
             { serie }
         );
-        res.status(200).send(result.records.map(record => record.get(0).properties));
+        const response = result.records.map(record => {
+            const platform = record.get('g');
+            return {
+                message: 200,
+                name: platform.properties.name,
+                numSeries: platform.properties.numSeries.low,
+                descripcion: platform.properties.description
+            };
+        });
+        res.status(200).send(response);
     } catch (error) {
-        res.status(500).send('Internal server error');
+        res.status(500).send({message});
     }
 };
 
@@ -390,10 +399,20 @@ const getDirectorsOfSerie = async (req, res) => {
     const { serie } = req.body;
     try {
         const result = await session.run(
-            'MATCH (s:Serie)-[:DIRECTED_BY]->(d:Director) WHERE s.name = $serie RETURN d',
+            'MATCH (d:Director)-[:Dirige]->(s:Series) WHERE s.title = $serie RETURN d',
             { serie }
         );
-        res.status(200).send(result.records.map(record => record.get(0).properties));
+        const response = result.records.map(record => {
+            const director = record.get('d');
+            return {
+                message: 200,
+                name: director.properties.name,
+                nacionalidad: director.properties.Nacionalidad,
+                edad: director.properties.edad.low,
+                premiado: director.properties.premiado,
+            };
+        });
+        res.status(200).send(response);
     } catch (error) {
         res.status(500).send('Internal server error');
     }
@@ -418,7 +437,7 @@ const getPlatformsOfSerie = async (req, res) => {
     const { serie } = req.body;
     try {
         const result = await session.run(
-            'MATCH (s:Serie)-[:AVAILABLE_ON]->(p:Platform) WHERE s.name = $serie RETURN p',
+            'MATCH (s:Series)-[:Transmite_en]->(p:Platform) WHERE s.title = $serie RETURN p',
             { serie }
         );
         res.status(200).send(result.records.map(record => record.get(0).properties));
