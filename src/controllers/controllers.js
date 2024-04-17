@@ -227,12 +227,12 @@ const addViewedDirector = async (req, res) => {
     const { email, director } = req.body;
     try {
         await session.run(
-            'MATCH (u:User), (d:Director) WHERE u.email = $email AND d.name = $director CREATE (u)-[:VIEWED]->(d)',
+            'MATCH (u:Usuarios), (d:Director) WHERE u.email = $email AND d.name = $director CREATE (d)-[:fav_de]->(u)',
             { email, director }
         );
-        res.status(200).send('Viewed director added');
+        res.status(200).send({message: 200});
     } catch (error) {
-        res.status(500).send('Internal server error');
+        res.status(500).send({message: 500});
     }
 };
 
@@ -241,12 +241,12 @@ const addViewedGenre = async (req, res) => {
     const { email, genre } = req.body;
     try {
         await session.run(
-            'MATCH (u:User), (g:Genre) WHERE u.email = $email AND g.name = $genre CREATE (u)-[:VIEWED]->(g)',
+            'MATCH (u:Usuarios), (g:Genre) WHERE u.email = $email AND g.name = $genre CREATE (g)-[:fav_de]->(u)',
             { email, genre }
         );
-        res.status(200).send('Viewed genre added');
+        res.status(200).send({message: 200});
     } catch (error) {
-        res.status(500).send('Internal server error');
+        res.status(200).send({message: 500});
     }
 };
 
@@ -255,12 +255,36 @@ const addFavoritePlatform = async (req, res) => {
     const { email, platform } = req.body;
     try {
         await session.run(
-            'MATCH (u:User), (p:Platform) WHERE u.email = $email AND p.name = $platform CREATE (u)-[:FAVORITE]->(p)',
+            'MATCH (u:Usuarios), (p:Platform) WHERE u.email = $email AND p.name = $platform CREATE (p)-[:fav_de]->(u)',
             { email, platform }
         );
-        res.status(200).send('Favorite platform added');
+        res.status(200).send({message: 200});
     } catch (error) {
-        res.status(500).send('Internal server error');
+        res.status(200).send({message: 500});
+    }
+};
+
+const getSeries = async (req, res) => {
+    try {
+        const result = await session.run(
+            'MATCH (s:Series) RETURN s'
+        );
+        const response = result.records.map(record => {
+            const serie = record.get('s');
+            return {
+                message: 200,
+                descripcion: serie.properties.descripcion,
+                Total_caps: serie.properties.Total_caps.low, 
+                Duracion: serie.properties.Duracion, 
+                year: serie.properties.year.low, 
+                rating: serie.properties.rating, 
+                title: serie.properties.title, 
+                ratingCount: serie.properties.ratingCount.low
+            };
+        });
+        res.status(200).send(response);
+    } catch (error) {
+        res.status(500).send({message: 500});
     }
 };
 
@@ -439,5 +463,6 @@ module.exports = {
     getSeriesOfActor,
     getGenresOfActor,
     getSeriesOfDirector,
-    getGenresOfDirector
+    getGenresOfDirector,
+    getSeries
 };
