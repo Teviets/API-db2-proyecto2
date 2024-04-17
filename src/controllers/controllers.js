@@ -390,7 +390,7 @@ const getGenresOfSerie = async (req, res) => {
         });
         res.status(200).send(response);
     } catch (error) {
-        res.status(500).send({message});
+        res.status(500).send({message: 500});
     }
 };
 
@@ -447,7 +447,7 @@ const getGenresOfActor = async (req, res) => {
 
 // Get directors of a serie
 const getDirectorsOfSerie = async (req, res) => {
-    const { serie } = req.body;
+    const { serie } = req.query;
     try {
         const result = await session.run(
             'MATCH (d:Director)-[:Dirige]->(s:Series) WHERE s.title = $serie RETURN d',
@@ -471,7 +471,7 @@ const getDirectorsOfSerie = async (req, res) => {
 
 // Get actors of a serie
 const getActorsOfSerie = async (req, res) => {
-    const { serie } = req.body;
+    const { serie } = req.query;
     try {
         const result = await session.run(
             'MATCH (a:Actor)-[:Participa_en]->(s:Series) WHERE s.title = $serie RETURN a',
@@ -495,7 +495,7 @@ const getActorsOfSerie = async (req, res) => {
 
 // Get platforms of a serie
 const getPlatformsOfSerie = async (req, res) => {
-    const { serie } = req.body;
+    const { serie } = req.query;
     try {
         const result = await session.run(
             'MATCH (s:Series)-[:Transmite_en]->(p:Platform) WHERE s.title = $serie RETURN p',

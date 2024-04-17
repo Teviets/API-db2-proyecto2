@@ -35,11 +35,11 @@ router.post('/getFavoritePlatforms', getFavoritePlatforms);
 // generos de la serie
 router.get('/getGenresOfSerie', getGenresOfSerie);
 // directores de la serie
-router.post('/getDirectorsOfSerie', getDirectorsOfSerie);
+router.get('/getDirectorsOfSerie', getDirectorsOfSerie);
 // actores de la serie
-router.post('/getActorsOfSerie', getActorsOfSerie);
+router.get('/getActorsOfSerie', getActorsOfSerie);
 // plataformas de la serie
-router.post('/getPlatformsOfSerie', getPlatformsOfSerie);
+router.get('/getPlatformsOfSerie', getPlatformsOfSerie);
 
 // añadir serie a favoritos
 router.post('/addFavoriteSeries', addFavoriteSeries);
