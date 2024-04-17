@@ -85,7 +85,7 @@ const getFavoriteSeries = async (req, res) => {
                 message: 200,
                 descripcion: serie.properties.descripcion,
                 Total_caps: serie.properties.Total_caps.low, 
-                Duracion: serie.properties.Duracion.low, 
+                Duracion: serie.properties.Duracion, 
                 year: serie.properties.year.low, 
                 rating: serie.properties.rating, 
                 title: serie.properties.title, 
@@ -152,10 +152,19 @@ const getViewedGenres = async (req, res) => {
     const { email } = req.body;
     try {
         const result = await session.run(
-            'MATCH (u:User)-[:VIEWED]->(g:Genre) WHERE u.email = $email RETURN g',
+            'MATCH (g:Genre)-[r:fav_de]->(u:Usuarios) WHERE u.email = $email RETURN g',
             { email }
         );
-        res.status(200).send(result.records.map(record => record.get(0).properties));
+        const response = result.records.map(record => {
+            const genre = record.get('g');
+            return {
+                message: 200,
+                name: genre.properties.name,
+                numSeries: genre.properties.numSeries.low,
+                descripcion: genre.properties.description,
+            };
+        });
+        res.status(200).send(response);
     } catch (error) {
         res.status(500).send('Internal server error');
     }
