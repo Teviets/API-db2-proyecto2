@@ -17,6 +17,7 @@ const login = async (req, res) => {
         const response = result.records.map(record => {
             const user = record.get('u');
             return {
+                message: 200,
                 nombre: user.properties.name,
                 apellido: user.properties.apellido,
                 correo: user.properties.email,
@@ -33,7 +34,7 @@ const login = async (req, res) => {
         //}
     } catch (error) {
         console.log(error);
-        res.status(500).send('Internal server error');
+        res.status(500).send({message: 500});
     }
 };
 
@@ -42,12 +43,12 @@ const  register = async (req, res) => {
     const { nombre, apellido, correo, constraseña, edad, descripcion } = req.body;
     try {
         await session.run(
-            'CREATE (u:User {nombre: $nombre, apellido: $apellido, correo: $correo, constraseña: $constraseña, edad: $edad, descripcion: $descripcion})',
+            'CREATE (u:Usuarios {nombre: $nombre, apellido: $apellido, correo: $correo, constraseña: $constraseña, edad: $edad, descripcion: $descripcion})',
             { nombre, apellido, correo, constraseña, edad, descripcion }
         );
-        res.status(200).send('User created');
+        res.status(200).send({message: 200});
     } catch (error) {
-        res.status(500).send('Internal server error');
+        res.status(500).send({message: 200});
     }
 };
 
