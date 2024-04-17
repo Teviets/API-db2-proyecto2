@@ -16,13 +16,14 @@ const login = async (req, res) => {
 
         const response = result.records.map(record => {
             const user = record.get('u');
+            console.log(user);
             return {
                 message: 200,
                 nombre: user.properties.name,
                 apellido: user.properties.apellido,
                 correo: user.properties.email,
                 contraseña: user.properties.contraseña,
-                edad: user.properties.edad.low, // Accede al valor real de 'edad'
+                edad: user.properties.edad.low, 
                 descripcion: user.properties.descripcion
             };
         });
@@ -30,7 +31,8 @@ const login = async (req, res) => {
         /*if (result.records.length === 0) {
             res.status(400).send('Invalid email or password');
         } else {*/
-            res.status(200).send(response[0]);
+        console.log(response);
+            res.status(200).send(response);
         //}
     } catch (error) {
         console.log(error);
@@ -40,13 +42,12 @@ const login = async (req, res) => {
 
 // Register
 const  register = async (req, res) => {
-    const { nombre, apellido, correo, constraseña, edad, descripcion } = req.body;
+    const { nombre, apellido, correo, contraseña, edad, descripcion } = req.body;
     try {
-        
-
+    
         await session.run(
-            'CREATE (u:Usuarios {name: $nombre, apellido: $apellido, email: $correo, constraseña: $constraseña, edad: $edad, descripcion: $descripcion})',
-            { nombre, apellido, correo, constraseña, edad, descripcion }
+            'CREATE (u:Usuarios {name: $nombre, apellido: $apellido, email: $correo, contraseña: $contraseña, edad: $edad, descripcion: $descripcion})',
+            { nombre, apellido, correo, contraseña, edad, descripcion }
         );
         res.status(200).send({message: 200});
     } catch (error) {
@@ -73,12 +74,26 @@ const getFavoriteSeries = async (req, res) => {
     const { email } = req.body;
     try {
         const result = await session.run(
-            'MATCH (u:User)-[:FAVORITE]->(s:Serie) WHERE u.email = $email RETURN s',
+            'MATCH (s:Series)-[r:fav_de]->(u:Usuarios) WHERE u.email = $email RETURN s;',
             { email }
         );
-        res.status(200).send(result.records.map(record => record.get(0).properties));
+
+        const response = result.records.map(record => {
+            const serie = record.get('s');
+            return {
+                message: 200,
+                descripcion: serie.properties.descripcion,
+                Total_caps: serie.properties.Total_caps.low, 
+                Duracion: serie.properties.Duracion.low, 
+                year: serie.properties.year.low, 
+                rating: serie.properties.rating.low, 
+                title: serie.properties.title, 
+                ratingCount: serie.properties.ratingCount.low
+            };
+        });
+        res.status(200).send(response);
     } catch (error) {
-        res.status(500).send('Internal server error');
+        res.status(500).send({message: 500});
     }
 };
 
@@ -87,9 +102,19 @@ const getViewedActors = async (req, res) => {
     const { email } = req.body;
     try {
         const result = await session.run(
-            'MATCH (u:User)-[:VIEWED]->(a:Actor) WHERE u.email = $email RETURN a',
+            'MATCH (a:Actor)-[:Fav_de]->(u:Usuarios) WHERE u.email = $email RETURN a',
             { email }
         );
+        const response = result.records.map(record => {
+            const actor = record.get('a');
+            return {
+                message: 200,
+                name: actor.properties.name,
+                nacionalidad: actor.properties.Nacionalidad,
+                edad: actor.properties.edad.low,
+                premiado: actor.properties.premiado,
+            };
+        });
         res.status(200).send(result.records.map(record => record.get(0).properties));
     } catch (error) {
         res.status(500).send('Internal server error');

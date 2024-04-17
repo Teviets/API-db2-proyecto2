@@ -349,13 +349,13 @@ def createGraph(tx):
     #createGenre(tx)
     #createPlatform(tx)
     #loadDFasCSVSeries(tx)
-    createRelationships(tx)
-    #contar_favoritos_actor(tx)
-    #contar_favoritos_director(tx)
-    #contar_favoritos_genero(tx)
-    #contar_favoritos_serie(tx)
-    #contar_favoritos_plataforma(tx)
-    #contar_numSeries_de_genero(tx)
+    #createRelationships(tx)
+    contar_favoritos_actor(tx)
+    contar_favoritos_director(tx)
+    contar_favoritos_genero(tx)
+    contar_favoritos_serie(tx)
+    contar_favoritos_plataforma(tx)
+    contar_numSeries_de_genero(tx)
 
 def pushData():
     with driver.session() as session:
@@ -365,8 +365,8 @@ def pushData():
 
     driver.close()
 
-#pushData()
+pushData()
 
-usuariosSuscritos()
+#usuariosSuscritos()
 
 

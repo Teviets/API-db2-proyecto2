@@ -18,25 +18,25 @@ router.put('/editDescription', editDescription);
 
 
 // series fav de usuario
-router.get('/getFavoriteSeries', getFavoriteSeries);
+router.post('/getFavoriteSeries', getFavoriteSeries);
 // actores vistas de usuario
-router.get('/getViewedActors', getViewedActors);
+router.post('/getViewedActors', getViewedActors);
 // directores vistas de usuario
-router.get('/getViewedDirectors', getViewedDirectors);
+router.post('/getViewedDirectors', getViewedDirectors);
 // generos vistas de usuario
-router.get('/getViewedGenres', getViewedGenres);
+router.post('/getViewedGenres', getViewedGenres);
 // plataformas favoritas de usuario
-router.get('/getFavoritePlatforms', getFavoritePlatforms);
+router.post('/getFavoritePlatforms', getFavoritePlatforms);
 
 // Series
 // generos de la serie
-router.get('/getGenresOfSerie', getGenresOfSerie);
+router.post('/getGenresOfSerie', getGenresOfSerie);
 // directores de la serie
-router.get('/getDirectorsOfSerie', getDirectorsOfSerie);
+router.post('/getDirectorsOfSerie', getDirectorsOfSerie);
 // actores de la serie
-router.get('/getActorsOfSerie', getActorsOfSerie);
+router.post('/getActorsOfSerie', getActorsOfSerie);
 // plataformas de la serie
-router.get('/getPlatformsOfSerie', getPlatformsOfSerie);
+router.post('/getPlatformsOfSerie', getPlatformsOfSerie);
 
 
 // listado de series recomendadas
