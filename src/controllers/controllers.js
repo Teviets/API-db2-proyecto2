@@ -80,13 +80,14 @@ const getFavoriteSeries = async (req, res) => {
 
         const response = result.records.map(record => {
             const serie = record.get('s');
+            console.log(serie.properties.rating);
             return {
                 message: 200,
                 descripcion: serie.properties.descripcion,
                 Total_caps: serie.properties.Total_caps.low, 
                 Duracion: serie.properties.Duracion.low, 
                 year: serie.properties.year.low, 
-                rating: serie.properties.rating.low, 
+                rating: serie.properties.rating, 
                 title: serie.properties.title, 
                 ratingCount: serie.properties.ratingCount.low
             };
