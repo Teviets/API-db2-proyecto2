@@ -33,7 +33,7 @@ router.post('/getFavoritePlatforms', getFavoritePlatforms);
 
 // Series
 // generos de la serie
-router.post('/getGenresOfSerie', getGenresOfSerie);
+router.get('/getGenresOfSerie', getGenresOfSerie);
 // directores de la serie
 router.post('/getDirectorsOfSerie', getDirectorsOfSerie);
 // actores de la serie
@@ -62,7 +62,7 @@ router.post('/getBestSeriesOfPlatform', getBestSeriesOfPlatform);
 // listado de generos recomendados
 router.post('/getBestSeriesOfGenre', getBestSeriesOfGenre);
 // listado de plataformas recomendadas
-router.post('/getGenresOfPlatform', getGenresOfPlatform);
+router.get('/getGenresOfPlatform', getGenresOfPlatform);
 
 // listado de series en las que aparece un actor
 router.post('/getSeriesOfActor', getSeriesOfActor);

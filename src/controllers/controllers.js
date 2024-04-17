@@ -373,7 +373,7 @@ const getPlatform = async (req, res) => {
 
 // Get genres of a serie
 const getGenresOfSerie = async (req, res) => {
-    const { serie } = req.body;
+    const { serie } =  req.query;
     try {
         const result = await session.run(
             'MATCH (s:Series)-[:Pertenece]->(g:Genre) WHERE s.title = $serie RETURN g',
@@ -667,7 +667,7 @@ const deleteFavoritePlatform = async (req, res) => {
     const { email, platform } = req.body;
     try {
         await session.run(
-            'MATCH (u:Usuarios)-[r:fav_de]->(p:Platform) WHERE u.email = $email AND p.name = $platform DELETE r',
+            'MATCH (p:Platform)-[r:fav_de]->(u:Usuarios) WHERE u.email = $email AND p.name = $platform DELETE r',
             { email, platform }
         );
         res.status(200).send({message: 200});
@@ -717,6 +717,7 @@ const getGenresOfDirector = async (req, res) => {
         res.status(500).send('Internal server error');
     }
 };
+
 
 
 module.exports = {
