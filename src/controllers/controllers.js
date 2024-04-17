@@ -288,6 +288,27 @@ const getSeries = async (req, res) => {
     }
 };
 
+const getActors = async (req, res) => {
+    try {
+        const result = await session.run(
+            'MATCH (a:Actor) RETURN a'
+        );
+        const response = result.records.map(record => {
+            const actor = record.get('a');
+            return {
+                message: 200,
+                name: actor.properties.name,
+                nacionalidad: actor.properties.Nacionalidad,
+                edad: actor.properties.edad.low,
+                premiado: actor.properties.premiado,
+            };
+        });
+        res.status(200).send(response);
+    } catch (error) {
+        res.status(500).send({message: 500});
+    }
+};
+
 // Get genres of a serie
 const getGenresOfSerie = async (req, res) => {
     const { serie } = req.body;
@@ -464,5 +485,6 @@ module.exports = {
     getGenresOfActor,
     getSeriesOfDirector,
     getGenresOfDirector,
-    getSeries
+    getSeries,
+    getActors
 };
