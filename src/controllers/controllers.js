@@ -423,12 +423,22 @@ const getActorsOfSerie = async (req, res) => {
     const { serie } = req.body;
     try {
         const result = await session.run(
-            'MATCH (s:Serie)-[:ACTED_BY]->(a:Actor) WHERE s.name = $serie RETURN a',
+            'MATCH (a:Actor)-[:Participa_en]->(s:Series) WHERE s.title = $serie RETURN a',
             { serie }
         );
-        res.status(200).send(result.records.map(record => record.get(0).properties));
+        const response = result.records.map(record => {
+            const actor = record.get('a');
+            return {
+                message: 200,
+                name: actor.properties.name,
+                nacionalidad: actor.properties.Nacionalidad,
+                edad: actor.properties.edad.low,
+                premiado: actor.properties.premiado,
+            };
+        });
+        res.status(200).send(response);
     } catch (error) {
-        res.status(500).send('Internal server error');
+        res.status(500).send({message: 500});
     }
 };
 
@@ -440,11 +450,23 @@ const getPlatformsOfSerie = async (req, res) => {
             'MATCH (s:Series)-[:Transmite_en]->(p:Platform) WHERE s.title = $serie RETURN p',
             { serie }
         );
-        res.status(200).send(result.records.map(record => record.get(0).properties));
+        const response = result.records.map(record => {
+            const platform = record.get('p');
+            return {
+                message: 200,
+                name: platform.properties.name,
+                precio: platform.properties.precio.low,
+                lanzamiento: platform.properties.lanzamiento,
+                tipo: platform.properties.tipo
+            };
+        });
+        res.status(200).send(response);
     } catch (error) {
-        res.status(500).send('Internal server error');
+        res.status(500).send({message: 500});
     }
 };
+
+
 
 // Get best series of a genre
 const getBestSeriesOfGenre = async (req, res) => {
