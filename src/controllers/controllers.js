@@ -102,7 +102,7 @@ const getViewedActors = async (req, res) => {
     const { email } = req.body;
     try {
         const result = await session.run(
-            'MATCH (a:Actor)-[:Fav_de]->(u:Usuarios) WHERE u.email = $email RETURN a',
+            'MATCH (a:Actor)-[:fav_de]->(u:Usuarios) WHERE u.email = $email RETURN a',
             { email }
         );
         const response = result.records.map(record => {
@@ -115,7 +115,7 @@ const getViewedActors = async (req, res) => {
                 premiado: actor.properties.premiado,
             };
         });
-        res.status(200).send(result.records.map(record => record.get(0).properties));
+        res.status(200).send(response);
     } catch (error) {
         res.status(500).send('Internal server error');
     }
