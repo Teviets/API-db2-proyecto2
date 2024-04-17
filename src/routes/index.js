@@ -8,7 +8,7 @@ const {
     getGenresOfSerie, getDirectorsOfSerie, getActorsOfSerie, getPlatformsOfSerie,
     getBestSeriesOfGenre, getGenresOfPlatform, getBestSeriesOfPlatform ,
     getSeriesOfActor, getGenresOfActor, getSeriesOfDirector, getGenresOfDirector,
-    getSeries, getActors
+    getSeries, getActors, getDirectors, getGenres, getPlatform
 } = require('../controllers/controllers.js');
 // login
 router.post('/login', login);
@@ -85,6 +85,9 @@ router.get('/getBestSeriesOfPlatform', getBestSeriesOfPlatform);
 // match n de todo
 router.get('/getSeries', getSeries);
 router.get('/getActors', getActors);
+router.get('/getDirectors', getDirectors);
+router.get('/getGenres', getGenres);
+router.get('/getPlatform', getPlatform);
 
 // editar cuenta
 

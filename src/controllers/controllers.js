@@ -309,6 +309,68 @@ const getActors = async (req, res) => {
     }
 };
 
+const getDirectors = async (req, res) => {
+    try {
+        const result = await session.run(
+            'MATCH (d:Director) RETURN d'
+        );
+        const response = result.records.map(record => {
+            const director = record.get('d');
+            return {
+                message: 200,
+                name: director.properties.name,
+                nacionalidad: director.properties.Nacionalidad,
+                edad: director.properties.edad.low,
+                premiado: director.properties.premiado,
+            };
+        });
+        res.status(200).send(response);
+    } catch (error) {
+        res.status(500).send({message: 500});
+    }
+};
+
+const getGenres = async (req, res) => {
+    try {
+        const result = await session.run(
+            'MATCH (g:Genre) RETURN g'
+        );
+        const response = result.records.map(record => {
+            const genre = record.get('g');
+            return {
+                message: 200,
+                name: genre.properties.name,
+                numSeries: genre.properties.numSeries.low,
+                descripcion: genre.properties.description,
+            };
+        });
+        res.status(200).send(response);
+    } catch (error) {
+        res.status(500).send({message: 500});
+    }
+};
+
+const getPlatform = async (req, res) => {
+    try {
+        const result = await session.run(
+            'MATCH (p:Platform) RETURN p'
+        );
+        const response = result.records.map(record => {
+            const platform = record.get('p');
+            return {
+                message: 200,
+                name: platform.properties.name,
+                precio: platform.properties.precio.low,
+                lanzamiento: platform.properties.lanzamiento,
+                tipo: platform.properties.tipo
+            };
+        });
+        res.status(200).send(response);
+    } catch (error) {
+        res.status(500).send({message: 500});
+    }
+};
+
 // Get genres of a serie
 const getGenresOfSerie = async (req, res) => {
     const { serie } = req.body;
@@ -486,5 +548,8 @@ module.exports = {
     getSeriesOfDirector,
     getGenresOfDirector,
     getSeries,
-    getActors
+    getActors,
+    getDirectors,
+    getGenres,
+    getPlatform
 };
