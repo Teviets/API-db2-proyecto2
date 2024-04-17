@@ -394,6 +394,57 @@ const getGenresOfSerie = async (req, res) => {
     }
 };
 
+const getSeriesOfActor = async (req, res) => {
+    const { actor } = req.body;
+    try {
+        const result = await session.run(
+            'MATCH (a:Actor)-[:Participa_en]->(s:Series) WHERE a.name = $actor RETURN s',
+            { actor }
+        );
+        const response = result.records.map(record => {
+            const serie = record.get('s');
+            return {
+                message: 200,
+                descripcion: serie.properties.descripcion,
+                Total_caps: serie.properties.Total_caps.low,
+                Duracion: serie.properties.Duracion,
+                year: serie.properties.year.low,
+                rating: serie.properties.rating,
+                title: serie.properties.title,
+                ratingCount: serie.properties.ratingCount.low
+            };
+        });
+        res.status(200).send(response);
+    } catch (error) {
+        res.status(500).send({message: 500});
+    }
+};
+
+// Get genres of an actor
+const getGenresOfActor = async (req, res) => {
+    const { actor } = req.body;
+    try {
+        const result = await session.run(
+            'MATCH (a:Actor)-[:Participa_en]->(s:Series)-[:Pertenece]->(g:Genre) WHERE a.name = $actor RETURN g',
+            { actor }
+        );
+        const response = result.records.map(record => {
+            const genre = record.get('g');
+            return {
+                message: 200,
+                name: genre.properties.name,
+                numSeries: genre.properties.numSeries.low,
+                descripcion: genre.properties.description
+            };
+        });
+        res.status(200).send(response);
+    } catch (error) {
+        res.status(500).send({message: 500});
+    }
+};
+
+
+
 // Get directors of a serie
 const getDirectorsOfSerie = async (req, res) => {
     const { serie } = req.body;
@@ -466,14 +517,64 @@ const getPlatformsOfSerie = async (req, res) => {
     }
 };
 
+// get series of Platform
+const getSeriesOfPlatform = async (req, res) => {
+    const { platform } = req.body;
+    try {
+        const result = await session.run(
+            'MATCH (p:Platform)-[:Transmite]->(s:Series) WHERE p.name = $platform RETURN s',
+            { platform }
+        );
+        const response = result.records.map(record => {
+            const serie = record.get('s');
+            return {
+                message: 200,
+                descripcion: serie.properties.descripcion,
+                Total_caps: serie.properties.Total_caps.low,
+                Duracion: serie.properties.Duracion,
+                year: serie.properties.year.low,
+                rating: serie.properties.rating,
+                title: serie.properties.title,
+                ratingCount: serie.properties.ratingCount.low
+            };
+        }
+        );
+        res.status(200).send(response);
+    } catch (error) {
+        res.status(500).send({message: 500});
+    }
+};
 
+const getGenderOfPlatform = async (req, res) => {
+
+    const { platform } = req.body;
+    try {
+        const result = await session.run(
+            'MATCH (p:Platform)-[:OFFERS]->(g:Genre) WHERE p.name = $platform RETURN g',
+            { platform }
+        );
+        const response = result.records.map(record => {
+            const genre = record.get('g');
+            return {
+                message: 200,
+                name: genre.properties.name,
+                numSeries: genre.properties.numSeries.low,
+                descripcion: genre.properties.description
+            };
+        }
+        );
+        res.status(200).send(response);
+    } catch (error) {
+        res.status(500).send({message: 500});
+    }
+};
 
 // Get best series of a genre
 const getBestSeriesOfGenre = async (req, res) => {
     const { genre } = req.body;
     try {
         const result = await session.run(
-            'MATCH (g:Genre)-[:BELONGS_TO]->(s:Serie) WHERE g.name = $genre RETURN s ORDER BY s.rating DESC LIMIT 10',
+            'MATCH (g:Genre)-[:Cuenta_con]->(s:Series) WHERE g.name = $genre RETURN s ORDER BY s.rating DESC LIMIT 10',
             { genre }
         );
         res.status(200).send(result.records.map(record => record.get(0).properties));
@@ -496,6 +597,85 @@ const getGenresOfPlatform = async (req, res) => {
     }
 };
 
+const deleteUsuario = async (req, res) => {
+    const { email } = req.body;
+    try {
+        await session.run(
+            'MATCH (u:Usuarios) WHERE u.email = $email DETACH DELETE u',
+            { email }
+        );
+        res.status(200).send({message: 200});
+    } catch (error) {
+        res.status(500).send({message: 500});
+    }
+};
+
+const deleteFavoriteSeries = async (req, res) => {
+    const { email, serie } = req.body;
+    try {
+        await session.run(
+            'MATCH (s:Series)-[r:fav_de]->(u:Usuarios) WHERE u.email = $email AND s.title = $serie DELETE r',
+            { email, serie }
+        );
+        res.status(200).send({message: 200});
+    } catch (error) {
+        res.status(500).send({message: 500});
+    }
+};
+
+const deleteFavoriteActor = async (req, res) => {
+    const { email, actor } = req.body;
+    try {
+        await session.run(
+            'MATCH (a:Actor)-[r:fav_de]->(u:Usuarios) WHERE u.email = $email AND a.name = $actor DELETE r',
+            { email, actor }
+        );
+        res.status(200).send({message: 200});
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({message: 500});
+    }
+};
+
+const deleteFavoriteDirector = async (req, res) => {
+    const { email, director } = req.body;
+    try {
+        await session.run(
+            'MATCH (d:Director)-[r:fav_de]->(u:Usuarios) WHERE u.email = $email AND d.name = $director DELETE r',
+            { email, director }
+        );
+        res.status(200).send({message: 200});
+    } catch (error) {
+        res.status(500).send({message: 500});
+    }
+};
+
+const deleteFavoriteGenre = async (req, res) => {
+    const { email, genre } = req.body;
+    try {
+        await session.run(
+            'MATCH (g:Genre)-[r:fav_de]->(u:Usuarios) WHERE u.email = $email AND g.name = $genre DELETE r',
+            { email, genre }
+        );
+        res.status(200).send({message: 200});
+    } catch (error) {
+        res.status(500).send({message: 500});
+    }
+};
+
+const deleteFavoritePlatform = async (req, res) => {
+    const { email, platform } = req.body;
+    try {
+        await session.run(
+            'MATCH (u:Usuarios)-[r:fav_de]->(p:Platform) WHERE u.email = $email AND p.name = $platform DELETE r',
+            { email, platform }
+        );
+        res.status(200).send({message: 200});
+    } catch (error) {
+        res.status(500).send({message: 500});
+    }
+}
+
 // Get best series of a platform
 const getBestSeriesOfPlatform = async (req, res) => {
     const { platform } = req.body;
@@ -510,37 +690,12 @@ const getBestSeriesOfPlatform = async (req, res) => {
     }
 };
 
-const getSeriesOfActor = async (req, res) => {
-    const { actor } = req.body;
-    try {
-        const result = await session.run(
-            'MATCH (a:Actor)-[:ACTED_IN]->(s:Serie) WHERE a.name = $actor RETURN s',
-            { actor }
-        );
-        res.status(200).send(result.records.map(record => record.get(0).properties));
-    } catch (error) {
-        res.status(500).send('Internal server error');
-    }
-};
-
-const getGenresOfActor = async (req, res) => {
-    const { actor } = req.body;
-    try {
-        const result = await session.run(
-            'MATCH (a:Actor)-[:ACTED_IN]->(s:Serie)-[:BELONGS_TO]->(g:Genre) WHERE a.name = $actor RETURN g',
-            { actor }
-        );
-        res.status(200).send(result.records.map(record => record.get(0).properties));
-    } catch (error) {
-        res.status(500).send('Internal server error');
-    }
-};
-
+// series de un director
 const getSeriesOfDirector = async (req, res) => {
     const { director } = req.body;
     try {
         const result = await session.run(
-            'MATCH (d:Director)-[:DIRECTED]->(s:Serie) WHERE d.name = $director RETURN s',
+            'MATCH (d:Director)-[:Dirige]->(s:Series) WHERE d.name = $director RETURN s',
             { director }
         );
         res.status(200).send(result.records.map(record => record.get(0).properties));
@@ -549,11 +704,12 @@ const getSeriesOfDirector = async (req, res) => {
     }
 };
 
+// generos de un director
 const getGenresOfDirector = async (req, res) => {
     const { director } = req.body;
     try {
         const result = await session.run(
-            'MATCH (d:Director)-[:DIRECTED]->(s:Serie)-[:BELONGS_TO]->(g:Genre) WHERE d.name = $director RETURN g',
+            'MATCH (d:Director)-[:Dirige]->(s:Series)-[:Pertenece]->(g:Genre) WHERE d.name = $director RETURN g',
             { director }
         );
         res.status(200).send(result.records.map(record => record.get(0).properties));
@@ -579,18 +735,24 @@ module.exports = {
     addFavoritePlatform,
     getGenresOfSerie,
     getDirectorsOfSerie,
-    getActorsOfSerie,
     getPlatformsOfSerie,
+    getActorsOfSerie,
+    getSeriesOfActor,
+    getGenresOfActor,
     getBestSeriesOfGenre,
     getGenresOfPlatform,
     getBestSeriesOfPlatform,
-    getSeriesOfActor,
-    getGenresOfActor,
     getSeriesOfDirector,
     getGenresOfDirector,
     getSeries,
     getActors,
     getDirectors,
     getGenres,
-    getPlatform
+    getPlatform,
+    deleteUsuario,
+    deleteFavoriteSeries,
+    deleteFavoriteActor,
+    deleteFavoriteDirector,
+    deleteFavoriteGenre,
+    deleteFavoritePlatform
 };

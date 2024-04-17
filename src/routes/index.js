@@ -8,7 +8,9 @@ const {
     getGenresOfSerie, getDirectorsOfSerie, getActorsOfSerie, getPlatformsOfSerie,
     getBestSeriesOfGenre, getGenresOfPlatform, getBestSeriesOfPlatform ,
     getSeriesOfActor, getGenresOfActor, getSeriesOfDirector, getGenresOfDirector,
-    getSeries, getActors, getDirectors, getGenres, getPlatform
+    getSeries, getActors, getDirectors, getGenres, getPlatform, deleteUsuario,
+    deleteFavoriteActor, deleteFavoriteDirector, deleteFavoriteGenre, deleteFavoritePlatform,
+    deleteFavoriteSeries
 } = require('../controllers/controllers.js');
 // login
 router.post('/login', login);
@@ -52,35 +54,42 @@ router.post('/addFavoritePlatform', addFavoritePlatform);
 
 
 // listado de series recomendadas
-router.get('/getBestSeriesOfGenre', getBestSeriesOfGenre);
+router.post('/getBestSeriesOfGenre', getBestSeriesOfGenre);
 // listado de actores recomendados
-router.get('/getGenresOfPlatform', getGenresOfPlatform);
+router.post('/getGenresOfPlatform', getGenresOfPlatform);
 // listado de directores recomendados
-router.get('/getBestSeriesOfPlatform', getBestSeriesOfPlatform);
+router.post('/getBestSeriesOfPlatform', getBestSeriesOfPlatform);
 // listado de generos recomendados
-router.get('/getBestSeriesOfGenre', getBestSeriesOfGenre);
+router.post('/getBestSeriesOfGenre', getBestSeriesOfGenre);
 // listado de plataformas recomendadas
-router.get('/getGenresOfPlatform', getGenresOfPlatform);
+router.post('/getGenresOfPlatform', getGenresOfPlatform);
 
 // listado de series en las que aparece un actor
-router.get('/getSeriesOfActor', getSeriesOfActor);
+router.post('/getSeriesOfActor', getSeriesOfActor);
 // listado de generos en los que ha participado un actor
-router.get('/getGenresOfActor', getGenresOfActor);
+router.post('/getGenresOfActor', getGenresOfActor);
 
 // listado de series en las que ha participado un director
-router.get('/getSeriesOfDirector', getSeriesOfDirector);
+router.post('/getSeriesOfDirector', getSeriesOfDirector);
 // listado de generos en los que ha participado un director
-router.get('/getGenresOfDirector', getGenresOfDirector);
+router.post('/getGenresOfDirector', getGenresOfDirector);
 
 // generos de una plataforma
-router.get('/getGenresOfPlatform', getGenresOfPlatform);
+router.post('/getGenresOfPlatform', getGenresOfPlatform);
 // mejores series del genero
-router.get('/getBestSeriesOfGenre', getBestSeriesOfGenre);
+router.post('/getBestSeriesOfGenre', getBestSeriesOfGenre);
 
 // generos de la plataforma
-router.get('/getGenresOfPlatform', getGenresOfPlatform);
+router.post('/getGenresOfPlatform', getGenresOfPlatform);
 // mejores series de la plataforma
-router.get('/getBestSeriesOfPlatform', getBestSeriesOfPlatform);
+router.post('/getBestSeriesOfPlatform', getBestSeriesOfPlatform);
+
+router.post('/deleteUsuario', deleteUsuario);
+router.post('/deleteFavoriteActor', deleteFavoriteActor);
+router.post('/deleteFavoriteDirector', deleteFavoriteDirector);
+router.post('/deleteFavoriteGenre', deleteFavoriteGenre);
+router.post('/deleteFavoritePlatform', deleteFavoritePlatform);
+router.post('/deleteFavoriteSeries', deleteFavoriteSeries);
 
 // match n de todo
 router.get('/getSeries', getSeries);
