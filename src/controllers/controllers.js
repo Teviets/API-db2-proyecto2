@@ -99,7 +99,7 @@ const getFavoriteSeries = async (req, res) => {
 
 // Get viewed actors of a user
 const getViewedActors = async (req, res) => {
-    const { email } = req.body;
+    const { email } = req.query;
     try {
         const result = await session.run(
             'MATCH (a:Actor)-[:fav_de]->(u:Usuarios) WHERE u.email = $email RETURN a',

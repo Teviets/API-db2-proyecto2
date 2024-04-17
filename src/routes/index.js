@@ -23,7 +23,7 @@ router.put('/editDescription', editDescription);
 // series fav de usuario
 router.post('/getFavoriteSeries', getFavoriteSeries);
 // actores vistas de usuario
-router.post('/getViewedActors', getViewedActors);
+router.get('/getViewedActors', getViewedActors);
 // directores vistas de usuario
 router.post('/getViewedDirectors', getViewedDirectors);
 // generos vistas de usuario
