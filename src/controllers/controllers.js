@@ -177,8 +177,19 @@ const getFavoritePlatforms = async (req, res) => {
             'MATCH (u:Usuarios)-[:Suscrito_a]->(p:Platform) WHERE u.email = $email RETURN p',
             { email }
         );
-        res.status(200).send(result.records.map(record => record.get(0).properties));
+        const response = result.records.map(record => {
+            const platform = record.get('p');
+            return {
+                message: 200,
+                name: platform.properties.name,
+                precio: platform.properties.precio,
+                lanzamiento: platform.properties.lanzamiento,
+                tipo: platform.properties.tipo
+            };
+        });
+        res.status(200).send(response);
     } catch (error) {
+        console.log(error);
         res.status(500).send('Internal server error');
     }
 };
@@ -202,12 +213,12 @@ const addViewedActor = async (req, res) => {
     const { email, actor } = req.body;
     try {
         await session.run(
-            'MATCH (u:User), (a:Actor) WHERE u.email = $email AND a.name = $actor CREATE (u)-[:VIEWED]->(a)',
+            'MATCH (u:Usuarios), (a:Actor) WHERE u.email = $email AND a.name = $actor CREATE (a)-[:fav_de]->(u)',
             { email, actor }
         );
-        res.status(200).send('Viewed actor added');
+        res.status(200).send({message: 200});
     } catch (error) {
-        res.status(500).send('Internal server error');
+        res.status(500).send({message: 500});
     }
 };
 
