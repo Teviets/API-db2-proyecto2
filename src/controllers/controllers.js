@@ -102,7 +102,7 @@ const getViewedActors = async (req, res) => {
     const { email } = req.body;
     try {
         const result = await session.run(
-            'MATCH (a:Actor)-[:Fav_de]->(u:Usuarios) WHERE u.email = $email RETURN a',
+            'MATCH (a:Actor)-[:fav_de]->(u:Usuarios) WHERE u.email = $email RETURN a',
             { email }
         );
         const response = result.records.map(record => {
@@ -126,10 +126,21 @@ const getViewedDirectors = async (req, res) => {
     const { email } = req.body;
     try {
         const result = await session.run(
-            'MATCH (u:User)-[:VIEWED]->(d:Director) WHERE u.email = $email RETURN d',
+            'MATCH (d:Director)-[:fav_de]->(u:Usuarios) WHERE u.email = $email RETURN d',
             { email }
         );
-        res.status(200).send(result.records.map(record => record.get(0).properties));
+
+        const response = result.records.map(record => {
+            const director = record.get('d');
+            return {
+                message: 200,
+                name: director.properties.name,
+                nacionalidad: director.properties.Nacionalidad,
+                edad: director.properties.edad.low,
+                premiado: director.properties.premiado,
+            };
+        });
+        res.status(200).send(response);
     } catch (error) {
         res.status(500).send('Internal server error');
     }
