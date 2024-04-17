@@ -80,7 +80,6 @@ const getFavoriteSeries = async (req, res) => {
 
         const response = result.records.map(record => {
             const serie = record.get('s');
-            console.log(serie.properties.rating);
             return {
                 message: 200,
                 descripcion: serie.properties.descripcion,
@@ -175,7 +174,7 @@ const getFavoritePlatforms = async (req, res) => {
     const { email } = req.body;
     try {
         const result = await session.run(
-            'MATCH (u:User)-[:FAVORITE]->(p:Platform) WHERE u.email = $email RETURN p',
+            'MATCH (u:Usuarios)-[:Suscrito_a]->(p:Platform) WHERE u.email = $email RETURN p',
             { email }
         );
         res.status(200).send(result.records.map(record => record.get(0).properties));
@@ -189,12 +188,12 @@ const addFavoriteSeries = async (req, res) => {
     const { email, serie } = req.body;
     try {
         await session.run(
-            'MATCH (u:User), (s:Serie) WHERE u.email = $email AND s.name = $serie CREATE (u)-[:FAVORITE]->(s)',
+            'MATCH (u:Usuarios), (s:Series) WHERE u.email = $email AND s.title = $serie CREATE (s)-[:fav_de]->(u)',
             { email, serie }
         );
-        res.status(200).send('Favorite series added');
+        res.status(200).send({message: 200});
     } catch (error) {
-        res.status(500).send('Internal server error');
+        res.status(500).send({message: 500});
     }
 };
 
