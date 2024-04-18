@@ -10,7 +10,7 @@ const {
     getSeriesOfActor, getGenresOfActor, getSeriesOfDirector, getGenresOfDirector,
     getSeries, getActors, getDirectors, getGenres, getPlatform, deleteUsuario,
     deleteFavoriteActor, deleteFavoriteDirector, deleteFavoriteGenre, deleteFavoritePlatform,
-    deleteFavoriteSeries
+    deleteFavoriteSeries, addProperty, deleteProperty, updatePassword
 } = require('../controllers/controllers.js');
 // login
 router.post('/login', login);
@@ -99,5 +99,8 @@ router.get('/getGenres', getGenres);
 router.get('/getPlatform', getPlatform);
 
 // editar cuenta
+router.post('/addProperty', addProperty);
+router.post('/deleteProperty', deleteProperty);
+router.post('/updatePassword', updatePassword)
 
 module.exports = router;

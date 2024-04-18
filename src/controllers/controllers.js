@@ -14,29 +14,27 @@ const login = async (req, res) => {
             { email, password }
         );
 
-        const response = result.records.map(record => {
-            const user = record.get('u');
-            console.log(user);
-            return {
-                message: 200,
-                nombre: user.properties.name,
-                apellido: user.properties.apellido,
-                correo: user.properties.email,
-                contraseña: user.properties.contraseña,
-                edad: user.properties.edad.low, 
-                descripcion: user.properties.descripcion
-            };
-        });
-        
-        /*if (result.records.length === 0) {
+        if (result.records.length === 0) {
             res.status(400).send('Invalid email or password');
-        } else {*/
-        console.log(response);
-            res.status(200).send(response);
-        //}
+            return;
+        }
+
+        const user = result.records[0].get('u');
+        const userData = {
+            message: 200,
+            nombre: user.properties.name,
+            apellido: user.properties.apellido,
+            correo: user.properties.email,
+            contraseña: user.properties.contraseña,
+            edad: user.properties.edad.low, 
+            descripcion: user.properties.descripcion
+        };
+
+        console.log(userData);
+        res.status(200).send(userData);
     } catch (error) {
         console.log(error);
-        res.status(500).send({message: 500});
+        res.status(500).send({ message: 'Internal server error' });
     }
 };
 
@@ -196,11 +194,11 @@ const getFavoritePlatforms = async (req, res) => {
 
 // Add favorite series
 const addFavoriteSeries = async (req, res) => {
-    const { email, serie } = req.body;
+    const { email, serie, estado, rating, repeticiones } = req.body;
     try {
         await session.run(
-            'MATCH (u:Usuarios), (s:Series) WHERE u.email = $email AND s.title = $serie CREATE (s)-[:fav_de]->(u)',
-            { email, serie }
+            'MATCH (u:Usuarios), (s:Series) WHERE u.email = $email AND s.title = $serie CREATE (s)-[:fav_de {estado: $estado, rating: $rating, repeticiones: $repeticiones}]->(u)',
+            { email, serie, estado, rating, repeticiones }
         );
         res.status(200).send({message: 200});
     } catch (error) {
@@ -597,19 +595,6 @@ const getGenresOfPlatform = async (req, res) => {
     }
 };
 
-const deleteUsuario = async (req, res) => {
-    const { email } = req.body;
-    try {
-        await session.run(
-            'MATCH (u:Usuarios) WHERE u.email = $email DETACH DELETE u',
-            { email }
-        );
-        res.status(200).send({message: 200});
-    } catch (error) {
-        res.status(500).send({message: 500});
-    }
-};
-
 const deleteFavoriteSeries = async (req, res) => {
     const { email, serie } = req.body;
     try {
@@ -667,7 +652,7 @@ const deleteFavoritePlatform = async (req, res) => {
     const { email, platform } = req.body;
     try {
         await session.run(
-            'MATCH (p:Platform)-[r:fav_de]->(u:Usuarios) WHERE u.email = $email AND p.name = $platform DELETE r',
+            'MATCH (u:Usuarios)-[r:Suscrito_a]->(p:Platform) WHERE u.email = $email AND p.name = $platform DELETE r',
             { email, platform }
         );
         res.status(200).send({message: 200});
@@ -718,7 +703,60 @@ const getGenresOfDirector = async (req, res) => {
     }
 };
 
+// Agregar una propiedad a el nodo usuario
+const addProperty = async (req, res) => {
+    const { email, value } = req.body;
+    try {
+        await session.run(
+            'MATCH (u:Usuarios) WHERE u.email = $email SET u.descripcion = $value',
+            { email, value }
+        );
+        res.status(200).send('Property added');
+    } catch (error) {
+        res.status(500).send('Internal server error');
+    }
+};
 
+// Eliminar una propiedad a el nodo usuario
+const deleteProperty = async (req, res) => {
+    const { email } = req.body;
+    try {
+        await session.run(
+            'MATCH (u:Usuarios) WHERE u.email = $email REMOVE u.descripcion',
+            { email }
+        );
+        res.status(200).send('Property deleted');
+    } catch (error) {
+        res.status(500).send('Internal server error');
+    }
+};
+
+// Actualizar la propiedad contraseña de el nodo usuario
+const updatePassword = async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        await session.run(
+            'MATCH (u:Usuarios) WHERE u.email = $email SET u.contraseña = $password',
+            { email, password }
+        );
+        res.status(200).send('Password updated');
+    } catch (error) {
+        res.status(500).send('Internal server error');
+    }
+};
+
+const deleteUsuario = async (req, res) => {
+    const { email } = req.body;
+    try {
+        await session.run(
+            'MATCH (u:Usuarios) WHERE u.email = $email DELETE u',
+            { email }
+        );
+        res.status(200).send({message: 200});
+    } catch (error) {
+        res.status(500).send({message: 500});
+    }
+};
 
 module.exports = {
     login,
@@ -755,5 +793,8 @@ module.exports = {
     deleteFavoriteActor,
     deleteFavoriteDirector,
     deleteFavoriteGenre,
-    deleteFavoritePlatform
+    deleteFavoritePlatform,
+    addProperty,
+    deleteProperty,
+    updatePassword
 };
